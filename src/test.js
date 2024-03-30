@@ -61,3 +61,24 @@ Module {
 // - *crtlC, y -- to quit script
 // sc stop mysql -- to quit the mysql service in admin cmd terminal
 // sc query mysql -- to see if it's running in admin cmd terminal
+
+/*
+1. Windows: If you're using MySQL as a service, you can start it from the Services management console (services.msc). 
+    Look for a service named something like "MySQL" or "MySQL Server" and start it.
+
+2. mysql -u root -p
+3. show databases; NOTE: ";" after each command in mysql 
+4. CREATE DATABASE <>; //<> = Database name
+5. use <>;
+6. SELECT * FROM <>; -- to view the table 
+6. quit
+
+//CMD Line code for mysql (Run as Admin)
+// sc start mysql -- to start mysql in admin cmd terminal
+// - npm start in normal (non admin cmd terminal)
+// -- *develop
+// -- *crtlC, y -- to quit script
+// sc stop mysql -- to quit the mysql service in admin cmd terminal
+// sc query mysql -- to see if it's running in admin cmd terminal
+
+*/

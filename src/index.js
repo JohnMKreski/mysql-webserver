@@ -1,9 +1,9 @@
 const express = require('express');
-const logger = require('morgan'); //passing data into, recieving from server
+const logger = require('morgan'); //passing data into, recieving from server //morgan is an npm module
 const bodyParser = require('body-parser'); //parsing JSON data into a database and converting them into the proper format for use
 
 //Custom Pieces for communication between ./endpoints
-const tasksRoutes = require('./routes/tasks.routes');
+const song_requestsRoutes = require('./routes/song_requests.routes');
 const middleware = require('./middleware/errors.middleware');
 
 //Optional Pieces for "default" setups
@@ -20,16 +20,12 @@ app.use(logger(logLevel));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-// ************************************
-// ROUTE-HANDLING MIDDLEWARE FUNCTIONS
-// ************************************
-
 // Handle routes for tasks.
 //BREAD & BUTTER @ ./tasks
 //groundwork for creaing basic authenticated API
 //Can define any number of endpoint along with their routes 
-app.use('/tasks', tasksRoutes); // http://localhost:3000/tasks //Route = API (hit on this endpoint, through this request)
-// app.use('/users', usersRoutes); // http://localhost:3000/users
+app.use('/song_requests', song_requestsRoutes); //Route = API (hit on this endpoint, through this request)
+// app.use('/users', usersRoutes); //If Needed. hits on --> http://localhost:3000/users
 
 // Handle 404 requests
 //Requests made to dev made requests that dont exist 
@@ -42,5 +38,5 @@ app.use(middleware.error500);
 // listen on server port
 //hits port on 3000 against function
 app.listen(port, function() {
-  console.log(`Running on port: ${port}...`);
+  console.log(`(index.js) Running on port: ${port}...`);
 });
