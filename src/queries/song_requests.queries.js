@@ -10,6 +10,7 @@ exports.CREATE_SONGREQUESTS_TABLE = `CREATE TABLE IF NOT EXISTS song_requests(
     artist_name varchar(255) NOT NULL,
     song_title varchar(255) NOT NULL,
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP(),
+    requested_time TIME NOT NULL DEFAULT '00:00:00',
     status varchar(255) DEFAULT 'not played',
     PRIMARY KEY (id)
   )`;
