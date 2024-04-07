@@ -1,7 +1,8 @@
 //This .js file sets up the database to use
 
 const mysql = require('mysql');
-const queries = require('./queries/song_requests.queries');
+const song_requestQueries = require('./queries/song_requests.queries');
+const authQueries = require('./queries/auth.queries');
 
 // Get the Host from Environment or use default
 const host = process.env.DB_HOST || 'localhost';
@@ -13,7 +14,7 @@ const user = process.env.DB_USER || 'root';
 const password = process.env.DB_PASS || 'password';
 
 // Get the Database from Environment or use default
-const database = process.env.DB_DATABASE || 'song_requests';
+const database = process.env.DB_DATABASE || 'songreqdb';
 
 // Create the connection with required details
 const con = mysql.createConnection({
@@ -29,39 +30,19 @@ con.connect(function(err) {
   if (err) throw err;
   console.log('(db-config[con.connect].js) Connected!');
 
-  // Create or ensure that the song_requests table exists
-  con.query(queries.CREATE_SONGREQUESTS_TABLE, function(err, result) {
+  con.query(authQueries.CREATE_USERS_TABLE, function(err, result) {
     if (err) throw err;
-    console.log('(db-config[con.query].js) "song_requests" table has been created or exists already!');
-  
-    // List all tables in all databases
-    /*con.query("SHOW DATABASES", function(err, databases) {
-      if (err) throw err;
-      databases.forEach(db => {
-        con.query(`USE ${db.Database}`, function(err) {
-          if (err) throw err;
-          con.query(`SHOW TABLES`, function(err, results) {
-            if (err) throw err;
-            console.log(`Tables in database '${db.Database}':`);
-            results.forEach(row => {
-              const tableName = row[`Tables_in_${db.Database}`];
-              console.log(`\nColumns in table '${tableName}':`);
-              if (tableName) {
-                con.query(`DESCRIBE ${tableName}`, function(err, columns) {
-                  if (err) throw err;
-                  columns.forEach(column => {
-                    console.log(column.Field);
-                  });
-                });
-              } else {
-                console.log('No tables found.');
-              }
-              
-            }); 
-          });
-        });
-      });
-    });*/
+    console.log(
+      '(db-config[con.query].js) "users" table has been created or exists already!'
+      );
+  });
+
+  // Create or ensure that the song_requests table exists
+  con.query(song_requestQueries.CREATE_SONGREQUESTS_TABLE, function(err, result) {
+    if (err) throw err;
+    console.log(
+      '(db-config[con.query].js) "song_requests" table has been created or exists already!'
+      );
   });
 });
 

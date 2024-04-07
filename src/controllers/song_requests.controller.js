@@ -15,8 +15,12 @@ exports.getAllSong_Requests = function(req, res) {
     con.query(queries.ALL_SONGREQUESTS, function(err, result, fields) { 
         if (err) {
         res.send(err);
+        console.error('Error fetching data:', error);
         }
         res.json(result);
+        console.log("Rendered!")
+        // Render the index.ejs page with the fetched data
+        res.render('table', { data: result });
     });
 };
 
@@ -74,4 +78,14 @@ exports.deleteSong_Requests = function(req, res) {
     });
 };
 
+/*
+exports.song_requestsRoutes =function(req, res) {
+  // Fetch data from the MySQL database
+  connection.query('SELECT * FROM your_table', (error, results) => {
+    if (error) throw error;
+    // Render the index.ejs page with the fetched data
+    res.render('index', { data: results });
+  });
+});
+*/
   

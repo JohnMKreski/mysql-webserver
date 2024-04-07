@@ -1,0 +1,25 @@
+<table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Artist Name</th>
+        <th>Song Title</th>
+        <th>Created Date</th>
+        <th>Requested Time</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% data.forEach(item => { %>
+        <tr>
+          <td><%= item.id %></td>
+          <td><%= item.artist_name %></td>
+          <td><%= item.song_title %></td>
+          <td><%= item.created_date %></td>
+          <td><%= item.requested_time %></td>
+          <td><%= item.status %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+  
