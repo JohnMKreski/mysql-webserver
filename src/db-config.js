@@ -1,8 +1,10 @@
 //This .js file sets up the database to use
 
 const mysql = require('mysql');
-const song_requestQueries = require('./queries/song_requests.queries');
-const authQueries = require('./queries/auth.queries');
+const {CREATE_SONGREQUESTS_TABLE} = require('./queries/song_requests.queries');
+const {CREATE_USERS_TABLE} = require('./queries/user.queries');
+// const authQueries = require('./queries/auth.queries');
+const query = require('./utils/query');
 
 // Get the Host from Environment or use default
 const host = process.env.DB_HOST || 'localhost';
@@ -16,37 +18,88 @@ const password = process.env.DB_PASS || 'password';
 // Get the Database from Environment or use default
 const database = process.env.DB_DATABASE || 'songreqdb';
 
+
+const connection = async () =>
+  new Promise((resolve, reject) => {
+    const con = mysql.createConnection({
+      host,
+      user,
+      password,
+      database,
+    });
+
+    con.connect((err) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+    });
+
+    resolve(con);
+  });
+
 // Create the connection with required details
-const con = mysql.createConnection({
-  host,
-  user,
-  password,
-  database
-});
-
-// Connect to the database.
-//object.connect = create connection
-con.connect(function(err) {
-  if (err) throw err;
-  console.log('(db-config[con.connect].js) Connected!');
-
-  con.query(authQueries.CREATE_USERS_TABLE, function(err, result) {
-    if (err) throw err;
-    console.log(
-      '(db-config[con.query].js) "users" table has been created or exists already!'
-      );
+(async () => {
+  const _con = await connection().catch((err) => {
+    throw err;
   });
 
-  // Create or ensure that the song_requests table exists
-  con.query(song_requestQueries.CREATE_SONGREQUESTS_TABLE, function(err, result) {
-    if (err) throw err;
-    console.log(
-      '(db-config[con.query].js) "song_requests" table has been created or exists already!'
-      );
-  });
-});
+  const userTableCreated = await query(_con, CREATE_USERS_TABLE).catch(
+    (err) => {
+      console.log("userTableCreated:err", err);
+    }
+  );
 
-module.exports = con; //exposes con that is open and live for the app to use
+  const songsTableCreated = await query(_con, CREATE_SONGREQUESTS_TABLE).catch(
+    (err) => {
+      console.log("songTableCreated:err", err);
+    }
+  );
+
+  if (!!userTableCreated && !!songsTableCreated) {
+    console.log('Tables Created!'); //! = boolean(false) !! = boolean(true)
+  }
+})();
+
+module.exports = connection;
+
+
+
+
+
+
+
+// Create the connection with required details
+// const con = mysql.createConnection({
+//   host,
+//   user,
+//   password,
+//   database
+// });
+
+// // Connect to the database.
+// //object.connect = create connection
+// con.connect(function(err) {
+//   if (err) throw err;
+//   console.log('(db-config[con.connect].js) Connected!');
+
+//   con.query(authQueries.CREATE_USERS_TABLE, function(err, result) {
+//     if (err) throw err;
+//     console.log(
+//       '(db-config[con.query].js) "users" table has been created or exists already!'
+//       );
+//   });
+
+//   // Create or ensure that the song_requests table exists
+//   con.query(song_requestQueries.CREATE_SONGREQUESTS_TABLE, function(err, result) {
+//     if (err) throw err;
+//     console.log(
+//       '(db-config[con.query].js) "song_requests" table has been created or exists already!'
+//       );
+//   });
+// });
+
+// module.exports = con; //exposes con that is open and live for the app to use
 
 // ^ this creates a table whitin the database (con.query...)
 //we can also create a databse through cmd terminal

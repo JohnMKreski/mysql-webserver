@@ -8,23 +8,26 @@ const bodyParser = require('body-parser'); //parsing JSON data into a database a
 const song_requestsRoutes = require('./routes/song_requests.routes');
 const authRoutes = require('./routes/auth.routes');
 const userRoutes = require('./routes/user.routes');
-const middleware = require('./middleware/errors.middleware');
+const {error404, error500} = require('./middleware/errors.middleware');
 
 //Optional Pieces for "default" setups
 
 const app = express(); //Initialize the app
 const port = process.env.PORT || 3000; //set the port variable // "= use this value(port) OR 3000"
 const logLevel = process.env.LOG_LEVEL || 'dev';//log level defined
+const env = process.env.NODE_ENV;
 
 // Middleware - logs server requests to console
 //Optional NEED
 
 // Set EJS as the view engine
-app.set('view engine', 'ejs');
-app.set('views', './views'); // Specify the directory where your EJS files are located
+// app.set('view engine', 'ejs');
+// app.set('views', './views'); // Specify the directory where your EJS files are located
 
-
-app.use(logger(logLevel));
+// Middleware - logs server requests to console
+if (env !== 'test') {
+  app.use(logger(logLevel));
+}
 
 // Middleware - parses incoming requests data (https://github.com/expressjs/body-parser)
 //NEED!!
@@ -44,23 +47,23 @@ app.use(cors());
 //Partial API Endpoints 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
-app.use('/api/song_requests', song_requestsRoutes); 
+app.use('/api/song_requests', song_requestsRoutes); //http://localhost:300/api/song_requests
 
 // app.use('/users', usersRoutes); //If Needed. hits on --> http://localhost:3000/users
 
 // Handle 404 requests
 //Requests made to dev made requests that dont exist 
 
-app.use(middleware.error404); // http://loaclhost:3000/(doesnt exist endpint)
+app.use(error404); // http://loaclhost:3000/(doesnt exist endpint)
 
 // Handle 500 requests - applies mostly to live services
 //If mysql doesn't want to work(save,delete,...) any data, 500 err will hit
 
-app.use(middleware.error500);
+app.use(error500);
 
 // listen on server port
 //hits port on 3000 against function
 
-app.listen(port, function() {
+app.listen(port, () => {
   console.log(`(index.js) Running on port: ${port}...`);
 });

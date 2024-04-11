@@ -4,7 +4,8 @@
   "description": "\"# mysql-webserver\"",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./src"
+    "start": "nodemon ./src",
+    "test": "set NODE_ENV=test && mocha ./tests/*"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +21,9 @@
     "mysql": "^2.18.1"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.4.0",
+    "mocha": "^10.4.0",
     "nodemon": "^3.1.0"
   }
 }

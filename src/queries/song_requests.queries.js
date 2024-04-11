@@ -22,7 +22,7 @@ exports.ALL_SONGREQUESTS = `SELECT * FROM song_requests`;
 
 // Get a single task by id
 //?' = request parameter from routes->controller->queries
-exports.SINGLE_SONGREQUESTS = `SELECT * FROM song_requests WHERE id = ?`;
+exports.SINGLE_SONGREQUEST = `SELECT * FROM song_requests WHERE id = ?`;
 
 //insert can be tricky
 // add a new record or create a record
@@ -32,13 +32,13 @@ exports.SINGLE_SONGREQUESTS = `SELECT * FROM song_requests WHERE id = ?`;
  * - INSERT INTO <table_name>(<col_name1>, <col_name3>, <col_name3>, ...)
  *    VALUES(<value1>, <value2>, <value3>, ...)
 **/
-exports.INSERT_SONGREQUESTS = `INSERT INTO song_requests (artist_name, song_title) VALUES (?, ?)`; 
+exports.INSERT_SONGREQUEST = `INSERT INTO song_requests (artist_name, song_title) VALUES (?, ?)`; 
 
 
 //column order is needed required in controllers and query (table control)
-exports.UPDATE_SONGREQUESTS = `UPDATE song_requests SET artist_name = ?, status = ? WHERE id = ?`;
+exports.UPDATE_SONGREQUEST = `UPDATE song_requests SET artist_name = ?, status = ? WHERE id = ?`;
 
 
 // Delete a task by id
 //deleting from parameter (ID)
-exports.DELETE_SONGREQUESTS = `DELETE FROM song_requests WHERE id = ?`;
+exports.DELETE_SONGREQUEST = `DELETE FROM song_requests WHERE id = ?`;
