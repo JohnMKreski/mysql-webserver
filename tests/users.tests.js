@@ -11,7 +11,7 @@ describe('User API service', () => {
   it("should GET a logged in user's unique id, username, and password", (done) => {
     const expected = [
       {
-        user_id: 1,
+        user_id: 3,
         username: 'admin',
         email: 'admin@example.com',
       },

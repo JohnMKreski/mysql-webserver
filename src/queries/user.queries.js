@@ -1,12 +1,13 @@
 exports.CREATE_USERS_TABLE = `CREATE TABLE IF NOT EXISTS users(
     user_id int NOT NULL AUTO_INCREMENT,
+    role_type ENUM('Admin', 'User') DEFAULT 'User',
     username varchar(255) NOT NULL UNIQUE,
     email varchar(255) NOT NULL,
     password varchar(255) NOT NULL,
     PRIMARY KEY (user_id)
 )`;
 
-exports.GET_ME_BY_USER_ID = `SELECT user_id, username, email FROM users WHERE user_id = ?`; // don't return the password
+exports.GET_ME_BY_USER_ID = `SELECT user_id, username, email, role_type FROM users WHERE user_id = ?`; // don't return the password
 
 exports.GET_ME_BY_USERNAME = `SELECT user_id, username, email FROM users WHERE username = ?`; // don't return the password
 
