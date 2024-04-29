@@ -3,6 +3,16 @@ const { jwtconfig, verifyToken } = require('../utils/jwt-helpers');
 module.exports = (req, res, next) => {
   const authHeader = req.headers['auth-token'] || req.headers['authorization'];
 
+  // Allow GET requests to proceed without authentication for guest users
+  if (req.method === 'GET' && !authHeader) {
+    return next();
+  }
+
+  // Allow unauthenticated access for registration endpoint
+  if (req.method === 'POST' && !authHeader) {
+    return next();
+  }
+
   // undefined === false
   if (!authHeader) {
     // stop user auth validation

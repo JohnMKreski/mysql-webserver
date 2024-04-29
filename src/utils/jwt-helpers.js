@@ -20,12 +20,12 @@ const refreshTokens = [];
  *  { expiresIn: 86400 } for 24 hours in seconds
  */
 // create a new auth token
-const generateAccessToken = (id, expiresIn) =>
-  jwt.sign({ id }, jwtconfig.access, expiresIn);
+const generateAccessToken = (id, role_type, expiresIn) =>
+  jwt.sign({ id, role_type }, jwtconfig.access, expiresIn);
 
 // create a new re-auth token
-const generateRefreshToken = (id, expiresIn) =>
-  jwt.sign({ id }, jwtconfig.refresh, expiresIn);
+const generateRefreshToken = (id, role_type, expiresIn) =>
+  jwt.sign({ id, role_type }, jwtconfig.refresh, expiresIn);
 
 // check token validity
 const verifyToken = (token, secret, req, res) => {

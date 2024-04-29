@@ -37,7 +37,7 @@ exports.getAllSong_Requests = async (req, res) => {
 
   //send off query to get all requets
 
-  const songs = await query(con, GET_ALL_SONGREQUESTS()).catch(
+  const songs = await query(con, GET_ALL_SONGREQUESTS, []).catch(
     (err) => {
       res.send(err);
       
@@ -342,24 +342,31 @@ exports.updateSong_Request_By_DJ = async (req, res) => {
 
 //Delete BY DJ
 exports.deleteSong_Request_By_DJ = async (req, res) => {
-  // establish connection
-  const con = await connection().catch((err) => {
-    throw err;
-  });
+  // Check if the user has the required role (e.g., 'Admin' or 'DJ')
+  // if (req.roleType !== 'Admin' && req.roleType !== 'DJ') {
+  //   return res.status(403).json({ msg: 'Unauthorized: Insufficient permissions.' });
+  // }
 
-  // query delete task
-  const result = await query(
-    con,
-    DELETE_SONGREQUEST_BY_DJ(req.roleType, req.params.songId)
-  ).catch(serverError(res));
-
-  if (result.affectedRows !== 1) {
-    res
-      .status(500)
-      .json({ msg: `Unable to delete song request at: ${req.params.songId}` });
-  }
-  res.json({ msg: 'Deleted successfully.' });
-};
+    try {
+      // Establish connection
+      const con = await connection();
+      
+      // Query delete task
+      const result = await query(
+        con,
+        DELETE_SONGREQUEST_BY_DJ(req.user.id, req.params.songId)
+      );
+  
+      if (result && result.affectedRows === 1) {
+        res.json({ msg: 'Deleted successfully.' });
+      } else {
+        res.status(500).json({ msg: `Unable to delete song at: ${req.params.songId}` });
+      }
+    } catch (error) {
+      console.error("Error deleting song request:", error);
+      res.status(500).json({ msg: 'Internal server error' });
+    }
+  };
 //*******************************************************************DELETE(all/user) */
 
 

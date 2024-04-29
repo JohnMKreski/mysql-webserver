@@ -66,5 +66,5 @@ exports.UPDATE_SONGREQUEST_BY_DJ = (roleType, songId, newValues) =>
 // exports.DELETE_SONGREQUEST = `DELETE FROM song_requests WHERE song_id = ?`;
 
 //Might need to make this explicit to admin user?
-exports.DELETE_SONGREQUEST_BY_DJ = (roleType, songId) =>
-  `DELETE FROM song_requests WHERE role_type = ${roleType === 'Admin'} AND song_id = ${songId}`;
+exports.DELETE_SONGREQUEST_BY_DJ = (userId, songId) =>
+  `DELETE FROM song_requests WHERE user_id = ${userId} AND song_id = ${songId}`;

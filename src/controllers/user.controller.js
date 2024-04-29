@@ -26,6 +26,8 @@ exports.getMe = async (req, res) => {
       }
     );
 
+    // console.log('User result:', userResult);
+
     // in positive number maake false
     if (!user.length) {
       res.status(400).json({ msg: 'No user found.' });

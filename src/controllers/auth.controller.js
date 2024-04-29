@@ -22,6 +22,7 @@ exports.register = async (req, res) => {
   // wait for connection to be established before query can do anything
   // first runner with batton
   const con = await connection().catch((err) => {
+    console.error('Error establishing connection:', err);
     throw err;
   });
 
@@ -29,6 +30,7 @@ exports.register = async (req, res) => {
   //second runner grabs the batton 
   const user = await query(con, GET_ME_BY_USERNAME, [req.body.username]).catch(
     (err) => {
+      console.error('Error retrieving user:', err);
       res.status(500).json({ msg: 'Could not retrieve user.' });
     }
   );
@@ -36,6 +38,7 @@ exports.register = async (req, res) => {
   // if we get one result back
   // gets a single user array = to 1 item in array.length
   if (user.length === 1) {
+    console.log('User already exists');
     res.status(403).json({ msg: 'User already exists!' });
   } else {
     // add new user
@@ -44,12 +47,14 @@ exports.register = async (req, res) => {
     //otherwise result to finish before user
     const result = await query(con, INSERT_NEW_USER, params).catch((err) => {
       //   stop registeration
+      console.error('Error registering user:', err);
       res
         .status(500)
         .json({ msg: 'Could not register user. Please try again later.' });
     });
 
-    if (result.length) {
+    if (result.affect === 1) {
+      console.log('New user created successfully');
         res.json({ msg: 'New user created!' });
     }
   }
@@ -89,11 +94,11 @@ exports.login = async (req, res) => {
     // tokens can exist forever! 
     // need refresh so they can get a new token after a while off the app
     // Amazon, Facebook, etc... they will ask to confirm password after a set expire time 
-    const accessToken = generateAccessToken(user[0].user_id, {
+    const accessToken = generateAccessToken(user[0].user_id, user[0].role_type, {
       // {id: 1, iat: wlenfwekl, expiredIn: 9174323 }
       expiresIn: 86400,
     });
-    const refreshToken = generateRefreshToken(user[0].user_id, {
+    const refreshToken = generateRefreshToken(user[0].user_id, user[0].role_type, {
       expiresIn: 86400,
     });
 
@@ -108,6 +113,7 @@ exports.login = async (req, res) => {
         access_token: accessToken,
         expires_in: 86400,
         refresh_token: refreshToken,
+        userRole: user[0].role_type
       });
   }
 };
@@ -130,7 +136,7 @@ exports.token = (req, res) => {
   const verified = verifyToken(refreshToken, jwtconfig.refresh, req, res);
 
   if (verified) {
-    const accessToken = generateToken(user[0].user_id, { expiresIn: 86400 });
+    const accessToken = generateToken(user[0].user_id, user[0].role_type, { expiresIn: 86400 });
     res
       .header('access_token', accessToken) // ex.: { 'aut-token': 'lksnenha0en4tnoaeiwnlgn3o4i'}
       .json({
