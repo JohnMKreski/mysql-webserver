@@ -12,11 +12,15 @@ const {
   generateAccessToken,
   generateRefreshToken,
 } = require('../utils/jwt-helpers');
+const escape = require('../utils/escape');
 
 exports.register = async (req, res) => {
   // params setup
-  const passwordHash = bcrypt.hashSync(req.body.password); //encypts pw
-  const params = [req.body.username, req.body.email, passwordHash];
+  const hash = bcrypt.hashSync(req.body.password); //encypts pw
+  const { username, email, password } = escape({
+    ...req.body,
+    password: hash,
+  });
 
   // establish a connection
   // wait for connection to be established before query can do anything
@@ -28,12 +32,10 @@ exports.register = async (req, res) => {
 
   // check for existing user first
   //second runner grabs the batton 
-  const user = await query(con, GET_ME_BY_USERNAME, [req.body.username]).catch(
-    (err) => {
-      console.error('Error retrieving user:', err);
-      res.status(500).json({ msg: 'Could not retrieve user.' });
-    }
-  );
+  const user = await query(con, GET_ME_BY_USERNAME(username)).catch((err) => {
+    console.log(err);
+    res.status(500).json({ msg: 'Could not retrieve user.' });
+  });
 
   // if we get one result back
   // gets a single user array = to 1 item in array.length
@@ -45,33 +47,40 @@ exports.register = async (req, res) => {
     //other wise create 
     //if statement makes the const user finish the race before con result can start
     //otherwise result to finish before user
-    const result = await query(con, INSERT_NEW_USER, params).catch((err) => {
+    const result = await query(
+      con,
+      INSERT_NEW_USER(username, email, password)
+    ).catch((err) => {
       //   stop registeration
-      console.error('Error registering user:', err);
+      console.log(err);
       res
         .status(500)
         .json({ msg: 'Could not register user. Please try again later.' });
     });
 
-    if (result.affect === 1) {
-      console.log('New user created successfully');
-        res.json({ msg: 'New user created!' });
+    if (result.affectedRows === 1) {
+      res.json({ msg: 'New user created!' });
     }
   }
 };
 
 exports.login = async (req, res) => {
+  const { username } = escape(req.body);
+  const { password } = req.body;
+  console.log(username);
+
   // establish a connection
   const con = await connection().catch((err) => {
     throw err;
   });
 
   // check for existing user first
-  const user = await query(con, GET_ME_BY_USERNAME_WITH_PASSWORD, [
-    req.body.username,
-  ]).catch((err) => {
-    res.status(500);
-    res.json({ msg: 'Could not retrieve user.' });
+  const user = await query(
+    con,
+    GET_ME_BY_USERNAME_WITH_PASSWORD(username)
+  ).catch((err) => {
+    console.log(err);
+    res.status(500).json({ msg: 'Could not retrieve user.' });
   });
 
   // if the user exists
@@ -80,8 +89,9 @@ exports.login = async (req, res) => {
     //   validate entered password from database saved password
     // .compare is also a promise
     const validPass = await bcrypt
-      .compare(req.body.password, user[0].password)
+      .compare(password, user[0].password)
       .catch((err) => {
+        console.log(err);
         res.json(500).json({ msg: 'Invalid password!' });
       });
     
@@ -115,7 +125,10 @@ exports.login = async (req, res) => {
         refresh_token: refreshToken,
         userRole: user[0].role_type
       });
+  } else {
+    res.status(401).json({ msg: 'Invalid login credentials.' });
   }
+
 };
 
 exports.token = (req, res) => {
@@ -146,6 +159,7 @@ exports.token = (req, res) => {
         access_token: accessToken,
         expires_in: 20,
         refresh_token: refreshToken,
+        userRole: user[0].role_type
       });
   }
   res.status(403).json({ msg: 'Invalid Token' });

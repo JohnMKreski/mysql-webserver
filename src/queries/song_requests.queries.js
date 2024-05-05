@@ -54,12 +54,12 @@ exports.INSERT_SONGREQUEST_BY_USER = (userId, artistName, songTitle) =>
 //column order is needed required in controllers and query (table control)
 // exports.UPDATE_SONGREQUEST = `UPDATE song_requests SET artist_name = ?, status = ? WHERE song_id = ?`;
 
-exports.UPDATE_SONGREQUEST_BY_USER = (roleType, songId, newValues) =>
-  `UPDATE song_requests SET ${newValues} WHERE role_type = ${roleType === 'User'} AND song_id = ${songId}`;
+exports.UPDATE_SONGREQUEST_BY_USER = (userId, songId, newValues) =>
+  `UPDATE song_requests SET ${newValues} WHERE user_id = ${userId} AND song_id = ${songId}`;
 
 
 exports.UPDATE_SONGREQUEST_BY_DJ = (roleType, songId, newValues) =>
-  `UPDATE song_requests SET ${newValues} WHERE role_type = ${roleType === 'Admin'} AND song_id = ${songId}`;
+  `UPDATE song_requests SET ${newValues} WHERE role_type = ${roleType} AND song_id = ${songId}`;
 
 // Delete a song request by id
 //deleting from parameter (ID)

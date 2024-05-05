@@ -19,4 +19,5 @@ exports.error500 = (error, req, res, next) => {
       message: error.message
     },
   });
+  return;
 };

@@ -275,17 +275,21 @@ exports.updateSong_Request_By_User = async (req, res) => {
   // query update song
   const result = await query(
     con,
-    UPDATE_SONGREQUEST_BY_USER(req.roleType, req.params.songId, values)
+    UPDATE_SONGREQUEST_BY_USER(req.userId, req.params.songId, values)
   ).catch(serverError(res));
 
-  if (result.affectedRows !== 1) {
-    res
+  if (result.affectedRows === 1) {
+    console.log("Updated User Song Request!");
+    return res.json({ msg: `Updated song request: '${req.body.artist_name}', '${req.body.song_title}'` })
+
+  } else {
+    return res
       .status(500)
       .json({ msg: `Unable to update song request: '${req.body.artist_name}', '${req.body.song_title}'` });
       //.json({ msg: `DJ, Unable to update song request status: '${req.body.user_id}', '${req.body.status}'` });
-
+    
   }
-  res.json(result);
+  // res.json(result);
 };
 
 //UPDATE by DJ
